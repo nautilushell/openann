@@ -2,7 +2,11 @@
 using namespace std;
 
 int main(void) {
-	cout << "Hello World This is new!" << endl;
+   while(true){
+       string i;
+       cin >> i;
+       cout << i << endl;
 
-	return(0);
+   }
+   return(0);
 }
