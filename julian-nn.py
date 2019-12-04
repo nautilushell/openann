@@ -40,7 +40,6 @@ class neuralNetwork:
 			self.weights.append(np.random.normal(0.0, pow(self.layers[i-1], -0.5), (self.layers[i], self.layers[i-1])))
 			print("Creating weight matrix of size " + str(self.weights[len(self.weights) -1].shape))
 
-		print(len(self.weights), len(self.cost))
 		pass
 	 
 	def forwardProp(self, X):
@@ -68,27 +67,36 @@ class neuralNetwork:
 		# application of the chain rule to find derivative of the loss 
 		#  function with respect to weights2 and weights1
 		
-		self.error.append(np.sum(np.square(y - self.y_hat)))
+		m = self.y_hat.shape[1]
+		cost = -1 / m * (np.dot(y, np.log(self.y_hat).T) + np.dot(1 - y, np.log(1 - self.y_hat).T))
+		self.error.append(np.squeeze(cost))
 		
-		baseCost = 2 * (y - self.y_hat) * derviativeSigmoid(self.y_hat)
+		baseCost = (self.y_hat - y) * derviativeSigmoid(self.y_hat)
 		
 		# For each layer
-		for i in range(len(self.layers)-2, 0, -1):
+		for i in range(len(self.weights)-1, 0, -1):
 			# Generate a cost from the baseCost
-			if i == len(self.layers)-2:
-				self.cost[i] = np.dot(self.layerOutput[0].T, baseCost)
+			if i == len(self.weights)-1:
+				print(i, "baseCost")
+				self.cost[i] = baseCost
 			else:
-				self.cost[i] = np.dot(self.cost[i+1], self.weights[i]) * derviativeSigmoid(self.layerOutput[i])
-
+				print(i, "adding to")
+				
+				# Current cost = previous cost * W * R'(y_hati)
+				self.cost[i] = self.cost[i+1] * self.weights[i] * derviativeSigmoid(self.layerOutput[i])
 			
 				# Dotting the next layer
 				if i == 0:
-					self.cost[i] = np.dot(X.T, self.cost[i])
+					self.cost[i] = self.cost[i] * X
 				else:
-					self.cost[i] = np.dot(self.layerOutput[i-1].T, self.cost[i])
+					print(i, "nextLayer")
+
+					self.cost[i] = self.cost[i] * self.layerOutput[i-1]
 
 			# Mutliplying by the learning rate
 			self.cost[i] = self.cost[i] * self.lr
+
+			print(self.weights[i].shape, self.cost[i].T.shape)
 
 			# Nudging it
 			self.weights[i] += self.cost[i].T
