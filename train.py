@@ -12,7 +12,7 @@ hiddenNodesCount = [200]
 outputNodeCount = 10
 learningRate = 0.001
 nn = ann.NeuralNetwork(inputNodeCount,hiddenNodesCount,outputNodeCount, learningRate)
-nn.load('weights.npy')
+# nn.load('weights.npy')
 
 """Train the ANN"""
 # load the mnist training data CSV file into a list
