@@ -39,11 +39,8 @@ class NeuralNetwork:
 			print("W" + str(i),"weight matrix of size " + str(self.weights[len(self.weights) -1].shape))
 		print("Output layer size: "+ str(self.layerNodeCount[i+1]))
 
-	def accuracy(self, y):
-		prob = np.copy(self.y_hat)
-		prob[prob > 0.5] = 1
-		prob[prob <= 0.5] = 0
-		return (prob == y).all(axis=0).mean()
+	def accuracy(self):
+		return (1-self.lastvariance)
 
 	def variance(self, y):
 		return np.sum(np.square(y - self.y_hat))
@@ -80,8 +77,8 @@ class NeuralNetwork:
 		self.backProp(X, y)
 
 	# after training save weights
-	def save(self):
-		with open('weights.npy','wb') as f:
+	def save(self, fname):
+		with open(fname,'wb') as f:
 			np.save(f, self.weights)
 		f.close()
 		print("Saved weights")
