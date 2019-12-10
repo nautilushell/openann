@@ -5,6 +5,8 @@ An Artificial Neural Network written in python only using the linear algebra too
 ### Usage
 
 ```python
+import ann
+
 # Initialization
 nodes = [781, 50, 30,..., 10] # input, hidden1, hidden2..., output
 lr = 0.001 # Learning rate
