@@ -5,12 +5,9 @@ import matplotlib.pyplot as plt
 
 
 """Create instance of neural network """   
-inputNodeCount = 784
-hiddenNodesCount = [200]
-outputNodeCount = 10
 learningRate = 0.001
-nn = ann.NeuralNetwork(inputNodeCount,hiddenNodesCount,outputNodeCount, learningRate)
-nn.load('weights.npy')
+nn = ann.NeuralNetwork([784,200,10], learningRate)
+nn.load('weights.txt')
 
 
 """Training set data and testing set data"""
@@ -34,8 +31,9 @@ for record in test_data_list:
 		print(correct_label, "correct")
 		scorecard.append(1)
 	else:
+
 		# network's answer doesn't match correct answer, add 0 to scorecard
-		print(correct_label, "wrong")
+		print(correct_label, label, "wrong")
 		scorecard.append(0)
 		pass
 	pass
