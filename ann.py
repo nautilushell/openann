@@ -17,24 +17,24 @@ def derviativeSigmoid(z):
 
 """Artificial Neural Network Class"""
 class NeuralNetwork:
-    def __init__(self, NetSize, learningRate):
+    def __init__(self, netSize, learningRate):
         
-        self.layerNodeCount = NetSize
-        self.numberOfLayers = len(NetSize)
+        self.layerNodeCount = netSize
+        self.numberOfLayers = len(netSize)
         self.error = []
         self.lr = learningRate
         self.lastvariance = 100
 
         # Create the neural network biases and weights arrays
-#        self.biases = [np.ones(i) for i in NetSize[1:]]
-        self.biases = [np.zeros(i) for i in NetSize[1:]]
-        self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
+#        self.biases = [np.ones(i) for i in netSize[1:]]
+        self.biases = [np.zeros(i) for i in netSize[1:]]
+        self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(netSize[:-1], netSize [1:])] 
         
         # Print out the sizes of the layers
-        print("Input layer size: "+ str(NetSize[0]))
+        print("Input layer size: "+ str(netSize[0]))
         for i in range(len(self.weights)):
             print("W" + str(i),"weight matrix of size " + str(self.weights[i].shape))
-        print("Output layer size: "+ str(NetSize[-1]))
+        print("Output layer size: "+ str(netSize[-1]))
 
     def accuracy(self):
         return (1-self.lastvariance)
