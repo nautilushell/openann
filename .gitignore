@@ -1,1 +1,4 @@
 mnist_train.csv
+/__pycache__/*
+/backprogation_videos_and_my_math_document/*
+
