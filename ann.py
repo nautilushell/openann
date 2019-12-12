@@ -7,24 +7,27 @@ Created on Thu Nov 14 19:38:54 2019
 
 import numpy as np
 
+"""ACTIVATION Functions"""
+# Different activation function and its derivative
 def sigmoid(x):
     return (1/(1+np.exp(-x)))
-
 def derivativeSigmoid(z):
      sig=sigmoid(z)
      return (sig * (1 - sig))
-
+ 
+""" COST Functions"""
+# quadratic cost function and its derivative
 def quadraticCost(y, hypothesisY):
-    return 0.5 * np.square(y - hypothesisY)
-    
+    return 0.5 * np.square(y - hypothesisY)    
 def quadraticCostPrime(y, hypothesisY):
     return ( y - hypothesisY)
-    
+
+# Cross Entropy cost function and its derivative    
 def crossEntropyCost(y, hypothesisY):
     return - (y * np.ln(hypothesisY) + (1 - y)* np.ln(1-hypothesisY))
-
 def crossEntropyCostPrime(y, hypothesisY):
     return (hypothesisY - y)/((1 - hypothesisY)*hypothesisY)
+
 
 """Artificial Neural Network Class"""
 class NeuralNetwork:
@@ -103,7 +106,6 @@ class NeuralNetwork:
         with open(fname,'wb') as f:
             np.save(f, self.weights)
         f.close()
-#        print("Saved weights")
 
     # after training load saved weights
     def load(self, file):
