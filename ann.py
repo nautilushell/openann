@@ -10,31 +10,51 @@ import numpy as np
 def sigmoid(x):
     return (1/(1+np.exp(-x)))
 
-def derviativeSigmoid(z):
+def derivativeSigmoid(z):
      sig=sigmoid(z)
      return (sig * (1 - sig))
 
+def quadraticCost(y, hypothesisY):
+    return 0.5 * np.square(y - hypothesisY)
+    
+def quadraticCostPrime(y, hypothesisY):
+    return ( y - hypothesisY)
+    
+def crossEntropyCost(y, hypothesisY):
+    return - (y * np.ln(hypothesisY) + (1 - y)* np.ln(1-hypothesisY))
+
+def crossEntropyCostPrime(y, hypothesisY):
+    return (hypothesisY - y)/((1 - hypothesisY)*hypothesisY)
 
 """Artificial Neural Network Class"""
 class NeuralNetwork:
-    def __init__(self, netSize, learningRate):
-        
-        self.layerNodeCount = netSize
-        self.numberOfLayers = len(netSize)
+       
+    def __init__(self, NetSize, learningRate):
+
+        self.layerNodeCount = NetSize
+        self.numberOfLayers = len(NetSize)
         self.error = []
         self.lr = learningRate
         self.lastvariance = 100
 
         # Create the neural network biases and weights arrays
-#        self.biases = [np.ones(i) for i in netSize[1:]]
-        self.biases = [np.zeros(i) for i in netSize[1:]]
-        self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(netSize[:-1], netSize [1:])] 
+#        self.biases = [np.ones(i) for i in NetSize[1:]]
+        self.biases = [np.zeros(i) for i in NetSize[1:]]
+        self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
         
         # Print out the sizes of the layers
-        print("Input layer size: "+ str(netSize[0]))
+        print("Input layer size: "+ str(NetSize[0]))
         for i in range(len(self.weights)):
             print("W" + str(i),"weight matrix of size " + str(self.weights[i].shape))
-        print("Output layer size: "+ str(netSize[-1]))
+        print("Output layer size: "+ str(NetSize[-1]))
+        
+        # Set Cost function and its derivative
+        self.f_cost = lambda y,a: quadraticCost(y, a)
+        self.df_cost = lambda y,a: quadraticCostPrime(y, a)
+        
+        # Finally, set the activation function and its derivative
+        self.f_activation = lambda x: sigmoid(x)
+        self.df_activation = lambda x: derivativeSigmoid(x)
 
     def accuracy(self):
         return (1-self.lastvariance)
@@ -45,9 +65,12 @@ class NeuralNetwork:
     def forwardProp(self, X):
         self.layerOutput = [X]
         self.layerInput= [X]
-        for i in range(self.numberOfLayers-1):
-            self.layerInput.append(np.dot(self.layerOutput[i], self.weights[i].T)+ self.biases[i])
-            self.layerOutput.append(sigmoid(self.layerInput[-1]))  
+        activation = X.T
+        for b, w in zip(self.biases, self.weights):
+           z = np.dot(w, activation) + np.array(b, ndmin=2).T
+           self.layerInput.append(z.T)
+           activation = self.f_activation(z)
+           self.layerOutput.append(activation.T)           
         self.y_hat = self.layerOutput[-1] # Set y_hat to the last (output) nodes
 
 
@@ -57,9 +80,10 @@ class NeuralNetwork:
         # For each layer calculate the error
         for i in range(self.numberOfLayers-2, -1, -1):
             if i == self.numberOfLayers-2:
-                errorsum = (2 * (y - self.y_hat) * derviativeSigmoid(self.layerInput[-1])).T
+#                errorsum = (self.cost_derivative_function(y, self.y_hat) * derivativeSigmoid(self.layerInput[-1])).T
+                errorsum = (self.df_cost(y,self.y_hat) * self.df_activation(self.layerInput[-1])).T
             else:
-                errorsum = (np.dot(self.weights[i+1].T, errorsum) * derviativeSigmoid(self.layerInput[i+1]).T)
+                errorsum = (np.dot(self.weights[i+1].T, errorsum) * self.df_activation(self.layerInput[i+1]).T)
 
             self.delta = np.dot(errorsum, self.layerOutput[i])
 
@@ -79,7 +103,7 @@ class NeuralNetwork:
         with open(fname,'wb') as f:
             np.save(f, self.weights)
         f.close()
-        print("Saved weights")
+#        print("Saved weights")
 
     # after training save weights
     def load(self, file):
@@ -91,5 +115,4 @@ class NeuralNetwork:
         a = X
         for b, w in zip(self.biases, self.weights):
             a = sigmoid(np.dot(w, a) +b)
-#        print (a)
         return a
