@@ -80,7 +80,6 @@ class NeuralNetwork:
         # For each layer calculate the error
         for i in range(self.numberOfLayers-2, -1, -1):
             if i == self.numberOfLayers-2:
-#                errorsum = (self.cost_derivative_function(y, self.y_hat) * derivativeSigmoid(self.layerInput[-1])).T
                 errorsum = (self.df_cost(y,self.y_hat) * self.df_activation(self.layerInput[-1])).T
             else:
                 errorsum = (np.dot(self.weights[i+1].T, errorsum) * self.df_activation(self.layerInput[i+1]).T)
