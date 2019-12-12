@@ -28,7 +28,8 @@ def crossEntropyCostPrime(y, hypothesisY):
 
 """Artificial Neural Network Class"""
 class NeuralNetwork:
-       
+     
+    # Initialize a neural network system.
     def __init__(self, NetSize, learningRate):
 
         self.layerNodeCount = NetSize
@@ -62,6 +63,7 @@ class NeuralNetwork:
     def variance(self, y):
         return np.sum(np.square(y - self.y_hat))
 
+    # Forward propagate an input during training through the network
     def forwardProp(self, X):
         self.layerOutput = [X]
         self.layerInput= [X]
@@ -73,9 +75,8 @@ class NeuralNetwork:
            self.layerOutput.append(activation.T)           
         self.y_hat = self.layerOutput[-1] # Set y_hat to the last (output) nodes
 
-
+    # Backpropagate the error through the network. Use Calculus chain rule
     def backProp(self, X, y):
-        # Use Calulus chain rule to find derivative of the loss with respect to weights
         self.lastvariance = self.variance(y)
         # For each layer calculate the error
         for i in range(self.numberOfLayers-2, -1, -1):
@@ -104,12 +105,13 @@ class NeuralNetwork:
         f.close()
 #        print("Saved weights")
 
-    # after training save weights
+    # after training load saved weights
     def load(self, file):
         with open(file, 'rb') as f:
             self.weights = np.load(f)
         f.close()
 
+    # Given a trained network, test a new input
     def guess(self, X):
         a = X
         for b, w in zip(self.biases, self.weights):
