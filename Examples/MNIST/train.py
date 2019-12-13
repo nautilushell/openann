@@ -8,7 +8,7 @@ training_set="./mnist_train.csv" #short training set
 
 learningRate = 0.001
 nn = ann.NeuralNetwork([784,200,10], learningRate)
-nn.load('weights.txt')
+#nn.load('weights.txt')
 
 """Train the ANN"""
 # load the mnist training data CSV file into a list
@@ -16,7 +16,7 @@ training_data_file = open(training_set, 'r')
 training_data_list = training_data_file.readlines()
 training_data_file.close()
 epochs = 1000
-limit=100000
+limit=1000
 
 print()
 print("...TRAINING...")
@@ -46,7 +46,10 @@ for e in range(epochs):
 
         except KeyboardInterrupt:
             print('Interrupted')
-            nn.save("weights.txt")
+            nn.save("weights.npy")
             exit(1)
 
-nn.save("weights.txt")
+
+nn.save("weights.npy")
+print()
+print ("Weight saved")
