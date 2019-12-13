@@ -1,13 +1,11 @@
 import ann
 
 import numpy as np
-import matplotlib.pyplot as plt
-
 
 """Create instance of neural network """   
 learningRate = 0.001
 nn = ann.NeuralNetwork([784,200,10], learningRate)
-nn.load('weights.txt')
+nn.load('weights.npy')
 
 
 """Training set data and testing set data"""
