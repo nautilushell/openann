@@ -18,7 +18,7 @@ for i in training_data.range():
 	nn.train(i.inputs, i.correctOutput) # Train
 	print(nn.accuracy)
 
-nn.save('weights.txt')
+nn.save('weights.npy')
 
 # Guess
 inputs = test_file.readlines() # Simplified
