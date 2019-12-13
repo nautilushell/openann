@@ -11,16 +11,16 @@ import ann
 nodes = [781, 50, 30,..., 10] # input, hidden1, hidden2..., output
 lr = 0.001 # Learning rate
 nn = ann.NeuralNetwork(nodes, learningRate) # Network with nodes and LR
-nn.load('weights.npy') # Loads the previous weights
+
 
 # Train
 for i in training_data.range():
 	nn.train(i.inputs, i.correctOutput) # Train
 	print(nn.accuracy)
+nn.save('weights.npy') # save the knowledge for later
 
-nn.save('weights.npy')
-
-# Guess
+# Guess 
+nn.load('weights.npy') # Loads the previous weights
 inputs = test_file.readlines() # Simplified
 outputs = nn.guess(inputs)
 
