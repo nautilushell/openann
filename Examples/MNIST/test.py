@@ -4,8 +4,9 @@ import numpy as np
 
 """Create instance of neural network """   
 learningRate = 0.001
-nn = ann.NeuralNetwork([784,200,10], learningRate)
-nn.load('weights.npy')
+nn = ann.NeuralNetwork("weights.npy", [784,200,10], "sigmoid", "quadratic")
+#nn.setLearningRate(learningRate)
+#nn.load('weights.npy')
 
 
 """Training set data and testing set data"""
