@@ -33,32 +33,51 @@ def crossEntropyCostPrime(y, hypothesisY):
 class NeuralNetwork:
      
     # Initialize a neural network system.
-    def __init__(self, NetSize, learningRate):
+    # rehydrate file is either "" or the file name of the saved network
+    # if rehydrating, network is reconsituted from file; other parameters ignored
+    def __init__(self, rehydrateFile, NetSize, actFunc, costFunc):
 
-        self.layerNodeCount = NetSize
-        self.numberOfLayers = len(NetSize)
         self.error = []
-        self.lr = learningRate
+        self.lr = .01  # default learning rate
         self.lastvariance = 100
-
-        # Create the neural network biases and weights arrays
-#        self.biases = [np.ones(i) for i in NetSize[1:]]
-        self.biases = [np.zeros(i) for i in NetSize[1:]]
-        self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
+        self.actFunc = actFunc
+        self.costFunc = costFunc
+        self.netSize = NetSize
         
+
+        if self.load(rehydrateFile):
+            # Create the neural network biases and weights arrays
+#           self.biases = [np.ones(i) for i in NetSize[1:]]
+            self.biases = [np.zeros(i) for i in NetSize[1:]]
+            self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
+           
+        self.numberOfLayers = len(self.netSize)
+      
         # Print out the sizes of the layers
-        print("Input layer size: "+ str(NetSize[0]))
+        print("Input layer size: "+ str(self.netSize[0]))
         for i in range(len(self.weights)):
             print("W" + str(i),"weight matrix of size " + str(self.weights[i].shape))
-        print("Output layer size: "+ str(NetSize[-1]))
+        print("Output layer size: "+ str(self.netSize[-1]))
         
         # Set Cost function and its derivative
-        self.f_cost = lambda y,a: quadraticCost(y, a)
-        self.df_cost = lambda y,a: quadraticCostPrime(y, a)
+        if costFunc == "quadratic":
+            print("Cost Function: Quadratic")
+            self.f_cost = lambda y,a: quadraticCost(y, a)
+            self.df_cost = lambda y,a: quadraticCostPrime(y, a)
+        elif costFunc == "crossentropy":
+            print("Cost Function: Cross Entropy")
+            self.f_cost = lambda y,a: crossEntropyCost(y, a)
+            self.df_cost = lambda y,a: crossEntropyCostPrime(y, a)
+            
         
         # Finally, set the activation function and its derivative
-        self.f_activation = lambda x: sigmoid(x)
-        self.df_activation = lambda x: derivativeSigmoid(x)
+        if actFunc == "sigmoid":
+            print("Activation Function: Sigmoid")
+            self.f_activation = lambda x: sigmoid(x)
+            self.df_activation = lambda x: derivativeSigmoid(x)
+     
+    def setLearningRate (self, learningRate):
+        self.lr = learningRate
 
     def accuracy(self):
         return (1-self.lastvariance)
@@ -104,14 +123,26 @@ class NeuralNetwork:
     # after training save weights
     def save(self, fname):
         with open(fname,'wb') as f:
+            np.save(f, self.netSize)
+            np.save(f, self.actFunc)
+            np.save(f, self.costFunc)
+            np.save(f, self.biases)
             np.save(f, self.weights)
         f.close()
 
     # after training load saved weights
     def load(self, file):
-        with open(file, 'rb') as f:
-            self.weights = np.load(f)
-        f.close()
+        try:
+            with open(file, 'rb') as f:
+                self.netSize = np.load(f,allow_pickle=True)
+                self.actFunc = np.load(f, allow_pickle=True)
+                self.costFunc = np.load(f, allow_pickle=True)
+                self.biases = np.load(f, allow_pickle=True)
+                self.weights = np.load(f, allow_pickle=True)
+                f.close()
+                return 0
+        except IOError:
+            return 1
 
     # Given a trained network, test a new input
     def guess(self, X):

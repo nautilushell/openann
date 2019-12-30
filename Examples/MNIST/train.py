@@ -7,7 +7,7 @@ training_set="./mnist_train.csv" #short training set
 """Create instance of neural network """   
 
 learningRate = 0.001
-nn = ann.NeuralNetwork([784,200,10], learningRate)
+nn = ann.NeuralNetwork("weights.npy", [784,200,10], "sigmoid", "quadratic")
 #nn.load('weights.txt')
 
 """Train the ANN"""
@@ -15,7 +15,7 @@ nn = ann.NeuralNetwork([784,200,10], learningRate)
 training_data_file = open(training_set, 'r')
 training_data_list = training_data_file.readlines()
 training_data_file.close()
-epochs = 1000
+epochs = 30
 limit=1000
 
 print()
