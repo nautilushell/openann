@@ -6,7 +6,7 @@ Created on Thu Nov 14 19:38:54 2019
 """ 
 
 import numpy as np
-import ann
+from openann.ann import ann
 import random
 
 def bin_array(num, m):
@@ -20,7 +20,8 @@ inputNodeCount = bitlength
 hiddenNodeCount = 40
 outputNodeCount = 2
 learningRate = 0.01
-nn = ann.NeuralNetwork([inputNodeCount, hiddenNodeCount, outputNodeCount], learningRate)
+nn = ann.NeuralNetwork("", [inputNodeCount, hiddenNodeCount, outputNodeCount], "sigmoid", "quadratic")
+nn.setLearningRate(learningRate)
 trainingCount=1000
 
 """Create a list of random number from 0 - 2^bitlength - 1"""

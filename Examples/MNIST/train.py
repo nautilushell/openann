@@ -1,6 +1,7 @@
-import ann
+from openann.ann import ann
 import numpy as np
-
+import os
+dir = os.path.dirname(__file__)
 training_set="./mnist_train.csv" #short training set
 
 
@@ -12,7 +13,8 @@ nn = ann.NeuralNetwork("weights.npy", [784,200,10], "sigmoid", "quadratic")
 
 """Train the ANN"""
 # load the mnist training data CSV file into a list
-training_data_file = open(training_set, 'r')
+filename = os.path.join(dir, training_set)
+training_data_file = open(filename, 'r')
 training_data_list = training_data_file.readlines()
 training_data_file.close()
 epochs = 30

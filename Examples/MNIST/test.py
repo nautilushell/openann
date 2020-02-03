@@ -1,20 +1,23 @@
-import ann
-
+from openann.ann import ann
 import numpy as np
+import os
+dir = os.path.dirname(__file__)
+
 
 """Create instance of neural network """   
 learningRate = 0.001
 nn = ann.NeuralNetwork("weights.npy", [784,200,10], "sigmoid", "quadratic")
-#nn.setLearningRate(learningRate)
-#nn.load('weights.npy')
+nn.setLearningRate(learningRate)
 
+#nn.load('weights.npy')
 
 """Training set data and testing set data"""
 
 test_set="./mnist_test_10.csv"       # short test set
+filename = os.path.join(dir, test_set)
 
 """Test ANN on new samples"""
-test_data_file = open(test_set, 'r') # load the mnist test data CSV file into a list
+test_data_file = open(filename, 'r') # load the mnist test data CSV file into a list
 test_data_list = test_data_file.readlines()
 test_data_file.close()
 scorecard = []
