@@ -5,13 +5,24 @@ An Artificial Neural Network written in python only using the linear algebra too
 ### Usage
 
 ```python
-import ann
+from openann.ann import ann
 
 # Initialization
+weightsFile = "weights.npy"
 nodes = [781, 50, 30,..., 10] # input, hidden1, hidden2..., output
+activationFunction="sigmoid"
+costFunction="quadratic"
 lr = 0.001 # Learning rate
-nn = ann.NeuralNetwork(nodes, learningRate) # Network with nodes and LR
 
+#Create network
+#  if weightsFile == "" then training starts over.
+#  ottherwise, weightsFile is used as the starting point for continued training
+#  activationFunction can be "sigmoid" (others will be added in the future)
+#  costFunction can be "quadratic" or "crossentropy"
+nn = ann.NeuralNetwork(weightsFile, nodes, activationFunction, costFunction)
+
+# Learning rate can be changed whenever desired
+nn.setLearningRate(lr)
 
 # Train
 for i in training_data.range():
@@ -19,7 +30,8 @@ for i in training_data.range():
 	print(nn.accuracy)
 nn.save('weights.npy') # save the knowledge for later
 
-# Guess 
+# Guess - That is, when you want to use a trained network
+#         If done at a later time, then be sure to create the ann first.
 nn.load('weights.npy') # Loads the previous weights
 inputs = test_file.readlines() # Simplified
 outputs = nn.guess(inputs)
