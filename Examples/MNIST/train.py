@@ -30,7 +30,7 @@ for e in range(epochs):
     for i in range(len(training_data_list)-1):
         
         if i == limit:
-            break;
+            break
         i+=1
 
         record = training_data_list[i]
