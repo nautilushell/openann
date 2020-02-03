@@ -24,7 +24,7 @@ def quadraticCostPrime(y, hypothesisY):
 
 # Cross Entropy cost function and its derivative    
 def crossEntropyCost(y, hypothesisY):
-    return - (y * np.ln(hypothesisY) + (1 - y)* np.ln(1-hypothesisY))
+    return - (y * np.log(hypothesisY) + (1 - y)* np.log(1-hypothesisY))
 def crossEntropyCostPrime(y, hypothesisY):
     return (hypothesisY - y)/((1 - hypothesisY)*hypothesisY)
 
