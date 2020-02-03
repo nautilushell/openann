@@ -5,6 +5,7 @@ An Artificial Neural Network written in python only using the linear algebra too
 ### Usage
 
 ```python
+
 from openann.ann import ann
 
 # Initialization
@@ -14,7 +15,7 @@ activationFunction="sigmoid"
 costFunction="quadratic"
 lr = 0.001 # Learning rate
 
-#Create network
+# Create network
 #  if weightsFile == "" then training starts over.
 #  ottherwise, weightsFile is used as the starting point for continued training
 #  activationFunction can be "sigmoid" (others will be added in the future)
