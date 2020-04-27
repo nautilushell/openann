@@ -5,12 +5,13 @@ Created on Thu Nov 14 19:38:54 2019
 @author: Julian Allchin
 """
 
-import numpy as np
+# import numpy as np
+import cupy as cp
 
 """ACTIVATION Functions"""
 # Different activation function and its derivative
 def sigmoid(x):
-    return (1/(1+np.exp(-x)))
+    return (1/(1+cp.exp(-x)))
 def derivativeSigmoid(z):
      sig=sigmoid(z)
      return (sig * (1 - sig))
@@ -18,13 +19,13 @@ def derivativeSigmoid(z):
 """ COST Functions"""
 # quadratic cost function and its derivative
 def quadraticCost(y, hypothesisY):
-    return 0.5 * np.square(y - hypothesisY)    
+    return 0.5 * cp.square(y - hypothesisY)    
 def quadraticCostPrime(y, hypothesisY):
     return ( y - hypothesisY)
 
 # Cross Entropy cost function and its derivative    
 def crossEntropyCost(y, hypothesisY):
-    return - (y * np.log(hypothesisY) + (1 - y)* np.log(1-hypothesisY))
+    return - (y * cp.log(hypothesisY) + (1 - y)* cp.log(1-hypothesisY))
 def crossEntropyCostPrime(y, hypothesisY):
     return (hypothesisY - y)/((1 - hypothesisY)*hypothesisY)
 
@@ -47,9 +48,9 @@ class NeuralNetwork:
 
         if self.load(rehydrateFile):
             # Create the neural network biases and weights arrays
-#           self.biases = [np.ones(i) for i in NetSize[1:]]
-            self.biases = [np.zeros(i) for i in NetSize[1:]]
-            self.weights=[np.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
+            # self.biases = [np.ones(i) for i in NetSize[1:]]
+            self.biases = [cp.zeros(i) for i in NetSize[1:]]
+            self.weights=[cp.random.randn(j, i)*0.1 for i, j in zip(NetSize[:-1], NetSize [1:])] 
            
         self.numberOfLayers = len(self.netSize)
       
@@ -83,7 +84,7 @@ class NeuralNetwork:
         return (1-self.lastvariance)
 
     def variance(self, y):
-        return np.sum(np.square(y - self.y_hat))
+        return cp.sum(cp.square(y - self.y_hat))
 
     # Forward propagate an input during training through the network
     def forwardProp(self, X):
@@ -91,7 +92,8 @@ class NeuralNetwork:
         self.layerInput= [X]
         activation = X.T
         for b, w in zip(self.biases, self.weights):
-           z = np.dot(w, activation) + np.array(b, ndmin=2).T
+           z = cp.dot(w, activation) + cp.array(b, ndmin=2).T
+           cp.cuda.Stream.null.synchronize()
            self.layerInput.append(z.T)
            activation = self.f_activation(z)
            self.layerOutput.append(activation.T)           
@@ -105,9 +107,11 @@ class NeuralNetwork:
             if i == self.numberOfLayers-2:
                 errorsum = (self.df_cost(y,self.y_hat) * self.df_activation(self.layerInput[-1])).T
             else:
-                errorsum = (np.dot(self.weights[i+1].T, errorsum) * self.df_activation(self.layerInput[i+1]).T)
+                errorsum = (cp.dot(self.weights[i+1].T, errorsum) * self.df_activation(self.layerInput[i+1]).T)
+                cp.cuda.Stream.null.synchronize()
 
-            self.delta = np.dot(errorsum, self.layerOutput[i])
+            self.delta = cp.dot(errorsum, self.layerOutput[i])
+            cp.cuda.Stream.null.synchronize()
 
             # Mutliplying by the learning rate
             self.delta = self.delta * self.lr
@@ -123,22 +127,22 @@ class NeuralNetwork:
     # after training save weights
     def save(self, fname):
         with open(fname,'wb') as f:
-            np.save(f, self.netSize)
-            np.save(f, self.actFunc)
-            np.save(f, self.costFunc)
-            np.save(f, self.biases)
-            np.save(f, self.weights)
+            cp.save(f, self.netSize)
+            cp.save(f, self.actFunc)
+            cp.save(f, self.costFunc)
+            cp.save(f, self.biases)
+            cp.save(f, self.weights)
         f.close()
 
     # after training load saved weights
     def load(self, file):
         try:
             with open(file, 'rb') as f:
-                self.netSize = np.load(f,allow_pickle=True)
-                self.actFunc = np.load(f, allow_pickle=True)
-                self.costFunc = np.load(f, allow_pickle=True)
-                self.biases = np.load(f, allow_pickle=True)
-                self.weights = np.load(f, allow_pickle=True)
+                self.netSize = cp.load(f,allow_pickle=True)
+                self.actFunc = cp.load(f, allow_pickle=True)
+                self.costFunc = cp.load(f, allow_pickle=True)
+                self.biases = cp.load(f, allow_pickle=True)
+                self.weights = cp.load(f, allow_pickle=True)
                 f.close()
                 return 0
         except IOError:
@@ -148,5 +152,6 @@ class NeuralNetwork:
     def guess(self, X):
         a = X
         for b, w in zip(self.biases, self.weights):
-            a = sigmoid(np.dot(w, a) +b)
+            a = sigmoid(cp.dot(w, a) +b)
+            cp.cuda.Stream.null.synchronize()
         return a

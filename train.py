@@ -1,14 +1,15 @@
-from openann.ann import ann
+from src import ann
 import numpy as np
+import cupy as cp
 import os
 dir = os.path.dirname(__file__)
-training_set="./mnist_train.csv" #short training set
+training_set='mnist_train_100.csv' #short training set
 
 
 """Create instance of neural network """   
 
 learningRate = 0.001
-nn = ann.NeuralNetwork("weights.npy", [784,200,10], "sigmoid", "quadratic")
+nn = ann.NeuralNetwork("", [784,200,10], "sigmoid", "quadratic")
 #nn.load('weights.txt')
 
 """Train the ANN"""
@@ -17,8 +18,8 @@ filename = os.path.join(dir, training_set)
 training_data_file = open(filename, 'r')
 training_data_list = training_data_file.readlines()
 training_data_file.close()
-epochs = 30
-limit=1000
+epochs = 100
+limit = 1000
 
 print()
 print("...TRAINING...")
@@ -38,12 +39,14 @@ for e in range(epochs):
         try:    
             all_values = record.split(',') # split the record by the ',' commas
                         
-            inputs = (np.asfarray(all_values[1:]) / 255.0 * 0.99) + 0.01 #scale
+            inputs = (cp.asarray(all_values[1:], float) / 255.0 * 0.99) + 0.01 #scale
+
             # create the target output values (all 0.01, except ans = 0.99)
-            targets = np.zeros(10) + 0.01
+            targets = cp.zeros(10) + 0.01
             targets[int(all_values[0])] = 0.99 # all_values[0] answer for input
-            X=np.array(inputs, ndmin=2) # create a 784 x 1 vector from input
-            nn.train(X, targets)
+            X=cp.array(inputs, ndmin=2) # create a 784 x 1 vector from input
+            with cp.cuda.Device(0):
+                nn.train(X, targets)
 
 
         except KeyboardInterrupt:
