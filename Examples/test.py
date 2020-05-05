@@ -1,4 +1,4 @@
-from openann.ann import ann
+from ANNsrc import ann
 import numpy as np
 import os
 dir = os.path.dirname(__file__)

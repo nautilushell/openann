@@ -2,11 +2,24 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Nov 14 19:38:54 2019
-@author: 
+@author: Julian Allchin
 """ 
+import os
+import sys
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+print('dir containing script is %s' % (scriptdir))
 
+# append our extra module directory (in this case Autogen) onto the script directory
+
+sys.path.append(os.path.join(scriptdir, 'Autogen'))
+
+# also change cwd to where the script is located (helps for finding relative files)
+print('============\ncwd is %s' %(os.getcwd()))
+
+os.chdir(scriptdir)
+print('============\ncwd after change to script dir is %s' %(os.getcwd()))
 import numpy as np
-from openann.ann import ann
+from ANNsrc import ann
 import random
 
 def bin_array(num, m):

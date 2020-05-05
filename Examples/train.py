@@ -1,9 +1,12 @@
-from openann.ann import ann
-import numpy as np
 import os
+
+import numpy as np
+
+from ANNsrc import ann
+
 dir = os.path.dirname(__file__)
 training_set="./mnist_train.csv" #short training set
-
+ 
 
 """Create instance of neural network """   
 
