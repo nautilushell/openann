@@ -17,7 +17,7 @@ lr = 0.001 # Learning rate
 
 # Create network
 #  if weightsFile == "" then training starts over.
-#  ottherwise, weightsFile is used as the starting point for continued training
+#  otherwise, weightsFile is used as the starting point for continued training
 #  activationFunction can be "sigmoid" (others will be added in the future)
 #  costFunction can be "quadratic" or "crossentropy"
 nn = ann.NeuralNetwork(weightsFile, nodes, activationFunction, costFunction)
